@@ -67,7 +67,7 @@
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>291</width>
+      <width>81</width>
       <height>24</height>
      </rect>
     </property>
@@ -79,16 +79,6 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QLineEdit" name="numLayerEdit"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="findLayerButton">
-       <property name="text">
-        <string>Search Layer</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </widget>
    <widget class="QPushButton" name="InsertButton">
@@ -97,7 +87,7 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>100</x>
       <y>20</y>
       <width>80</width>
       <height>21</height>
@@ -113,7 +103,7 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>390</x>
+      <x>190</x>
       <y>20</y>
       <width>80</width>
       <height>21</height>
@@ -126,7 +116,7 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>390</x>
+      <x>190</x>
       <y>0</y>
       <width>80</width>
       <height>16</height>
@@ -134,6 +124,58 @@
     </property>
     <property name="text">
      <string>PushButton</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="captureOnBox">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>0</y>
+      <width>54</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Capture</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="insertTextPlot">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>0</y>
+      <width>80</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Plot insert text</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="fixScaleBox">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>20</y>
+      <width>54</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Fix Scale</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="dontUpdateScreenBox">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>20</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Don't update</string>
     </property>
    </widget>
   </widget>

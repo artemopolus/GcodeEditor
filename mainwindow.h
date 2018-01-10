@@ -7,6 +7,8 @@
 #include <QTextStream>
 #include "gcodeanalyzator.h"
 #include <QVector>
+#include <QMouseEvent>
+#include "qcustomplot.h"
 
 namespace Ui {
 class MainWindow;
@@ -21,6 +23,7 @@ typedef struct
     QVector<double> Ydata;
 }oneLayer;
 
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -32,6 +35,7 @@ public:
     QFile srcFile;
     QVector<oneLayer> listLayer;
     int currentLayer;
+
 
 private slots:
     void on_openFileButton_clicked();
@@ -46,8 +50,15 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void mousePressEvent(QMouseEvent* event);
+
+    void on_textToInsert_textChanged();
+
+    void on_insertTextPlot_clicked();
+
 private:
     Ui::MainWindow *ui;
+    QCPCurve * path;
 };
 
 #endif // MAINWINDOW_H

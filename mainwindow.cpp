@@ -8,11 +8,27 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->ui->statusLabel->setText("PLZ, choose fkn file");
     this->ui->plotData->addGraph();
+    this->ui->plotData->addGraph();
+    this->path = new QCPCurve(ui->plotData->xAxis,ui->plotData->yAxis);
+    connect(this->ui->plotData, &QCustomPlot::mousePress,this,&MainWindow::mousePressEvent);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
+    QCustomPlot* customPlot = qobject_cast<QCustomPlot*>(sender());
+        double x = customPlot->xAxis->pixelToCoord(event->pos().x());
+        double y = customPlot->yAxis->pixelToCoord(event->pos().y());
+    QString str = "G1 X" + QString::number(x) + " Y" + QString::number(y);
+    this->ui->statusLabel->setText(str);
+    if (this->ui->captureOnBox->isChecked())
+    {
+        this->ui->textToInsert->append(str);
+    }
 }
 
 void MainWindow::on_openFileButton_clicked()
@@ -139,8 +155,8 @@ void MainWindow::on_layersList_currentRowChanged(int currentRow)
         this->ui->textToInsert->setText(this->listLayer[currentRow].text);
     else
         this->ui->textToInsert->clear();
-
-    this->ui->plotData->clearPlottables();
+    if (!this->ui->dontUpdateScreenBox->isChecked())
+        this->ui->plotData->clearPlottables();
     QVector<double> X = this->listLayer[currentRow].Xdata;
     QVector<double> Y = this->listLayer[currentRow].Ydata;
     /*
@@ -161,32 +177,35 @@ The newly created plottable can be modified, e.g.:
     newCurve->setData(t, X, Y);
     //this->ui->plotData->rescaleAxes();
     //ui->Acc1widget->yAxis->setRange(minY, maxY);
-    double minX = X[0]; double maxX = X[0];
-    double minY = Y[0]; double maxY = Y[0];
-    for (unsigned int i = 0; i < X.length(); i++)
+    if (!this->ui->fixScaleBox->isChecked())
     {
-        if (X[i]<minX)  minX = X[i];
-        if (X[i]>maxX)  maxX = X[i];
-        if (Y[i]<minY)  minY = Y[i];
-        if (Y[i]>maxY)  maxY = Y[i];
-    }
-    int shift = 10;
-    if ((maxX - minX)<(maxY - minY))
-    {
+        double minX = X[0]; double maxX = X[0];
+        double minY = Y[0]; double maxY = Y[0];
+        for (int i = 0; i < X.length(); i++)
+        {
+            if (X[i]<minX)  minX = X[i];
+            if (X[i]>maxX)  maxX = X[i];
+            if (Y[i]<minY)  minY = Y[i];
+            if (Y[i]>maxY)  maxY = Y[i];
+        }
+        int shift = 10;
+        if ((maxX - minX)<(maxY - minY))
+        {
 
-        int meanMaxMinY = floor((maxY + minY)/2);
-        int halfMax_Min = floor((maxY - minY)/2);
-        int meanMaxMinX = floor((maxX + minX)/2);
-        this->ui->plotData->xAxis->setRange((meanMaxMinX - halfMax_Min - shift),(meanMaxMinX + halfMax_Min + shift));
-        this->ui->plotData->yAxis->setRange((meanMaxMinY - halfMax_Min - shift),(meanMaxMinY + halfMax_Min + shift));
-    }
-    else
-    {
-        int meanMaxMinX = floor((minX + maxX)/2);
-        int halfMax_Min = floor((maxX - minX)/2);
-        int meanMaxMinY = floor((minY + maxY)/2);
-        this->ui->plotData->xAxis->setRange((meanMaxMinX - halfMax_Min - shift),(meanMaxMinX + halfMax_Min + shift));
-        this->ui->plotData->yAxis->setRange((meanMaxMinY - halfMax_Min - shift),(meanMaxMinY + halfMax_Min + shift));
+            int meanMaxMinY = floor((maxY + minY)/2);
+            int halfMax_Min = floor((maxY - minY)/2);
+            int meanMaxMinX = floor((maxX + minX)/2);
+            this->ui->plotData->xAxis->setRange((meanMaxMinX - halfMax_Min - shift),(meanMaxMinX + halfMax_Min + shift));
+            this->ui->plotData->yAxis->setRange((meanMaxMinY - halfMax_Min - shift),(meanMaxMinY + halfMax_Min + shift));
+        }
+        else
+        {
+            int meanMaxMinX = floor((minX + maxX)/2);
+            int halfMax_Min = floor((maxX - minX)/2);
+            int meanMaxMinY = floor((minY + maxY)/2);
+            this->ui->plotData->xAxis->setRange((meanMaxMinX - halfMax_Min - shift),(meanMaxMinX + halfMax_Min + shift));
+            this->ui->plotData->yAxis->setRange((meanMaxMinY - halfMax_Min - shift),(meanMaxMinY + halfMax_Min + shift));
+        }
     }
     this->ui->plotData->replot();
 }
@@ -195,7 +214,25 @@ void MainWindow::on_InsertButton_clicked()
 {
     QString text = this->ui->textToInsert->toPlainText();
     this->listLayer[this->currentLayer].text = text;
-    QString str = this->ui->layersList->item(this->currentLayer)->text() + " edit";
+    QString str = this->ui->layersList->item(this->currentLayer)->text();
+    QStringList strlst = str.split(" ");
+    if (strlst.length() > 3)
+    {
+        if (text.isEmpty())
+        {
+            str = "";
+            for(unsigned int i = 0; i < 3; i++)
+                str += strlst[i] + " ";
+        }
+    }
+    else
+    {
+        if (!text.isEmpty())
+        {
+            str += " edit";
+        }
+    }
+    //QString str = this->ui->layersList->item(this->currentLayer)->text() + " edit";
 
     this->ui->layersList->removeItemWidget(this->ui->layersList->takeItem(this->currentLayer));
     this->ui->layersList->insertItem((this->currentLayer - 1), str);
@@ -251,4 +288,33 @@ void MainWindow::on_pushButton_clicked()
 {
     QString str = "G91\nG1 Z5\nG1 E-3 F1000\nM300 S5000 P280\nG4 S1\nM300 S5000 P280\nG90\n G1 Y10 X10 F1000\nM117 Push Me\nM0\nG91\nG1 E3 F1000\nG92 E0\nG90\n";
     this->ui->textToInsert->setText(str);
+}
+
+void MainWindow::on_textToInsert_textChanged()
+{
+
+}
+
+
+
+void MainWindow::on_insertTextPlot_clicked()
+{
+    QStringList rowList = this->ui->textToInsert->toPlainText().split("\n");
+    double x,y,t=0;
+    QVector<double> tx,ty,tt;
+    for(int i = 0; i < rowList.length(); i++)
+    {
+        if (isXYmove(rowList[i],&x,&y))
+        {
+            tx.push_back(x);
+            ty.push_back(y);
+            tt.push_back(t);
+            t++;
+        }
+    }
+    QCPCurve * m = new QCPCurve(ui->plotData->xAxis,ui->plotData->yAxis);
+    m->setData(tt,tx,ty);
+    m->setPen(QPen(Qt::red));
+    //this->path->setData(tt, tx, ty);
+    this->ui->plotData->replot();
 }
