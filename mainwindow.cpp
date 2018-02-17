@@ -11,6 +11,10 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->plotData->addGraph();
     this->path = new QCPCurve(ui->plotData->xAxis,ui->plotData->yAxis);
     connect(this->ui->plotData, &QCustomPlot::mousePress,this,&MainWindow::mousePressEvent);
+    //ConfigParser("config.json");
+    ConfigParser = new gCodeParser("config.json");
+    ConfigParser->readJsonFile();
+
 }
 
 MainWindow::~MainWindow()
@@ -55,7 +59,7 @@ void MainWindow::on_openFileButton_clicked()
         switch (state)
         {
         case 0:
-            if (isLayerChange(dataStr))
+            if (isLayerChange(dataStr,ConfigParser->ChangeLayerTag,ConfigParser->OnEndTag,ConfigParser->CommentTag))
             {
                 state = 1;
                 str = i;
@@ -65,14 +69,14 @@ void MainWindow::on_openFileButton_clicked()
             }
             break;
         case 1:
-            if (isZChange(dataStr, &Ztmp))
+            if (isZChange(dataStr, &Ztmp,ConfigParser->G1Tag))
             {
                 Z = Ztmp;
                 state = 2;
             }
             break;
         case 2:
-            if (isZChange(dataStr, &Ztmp))
+            if (isZChange(dataStr, &Ztmp,ConfigParser->G1Tag))
             {
                 if (Z > Ztmp)
                 {
@@ -80,7 +84,7 @@ void MainWindow::on_openFileButton_clicked()
                 }
             }
             else{
-                if (isLayerChange(dataStr))
+                if (isLayerChange(dataStr,ConfigParser->ChangeLayerTag,ConfigParser->OnEndTag,ConfigParser->CommentTag))
                 {
                     state = 0;
                     oneLayer obj;
@@ -103,7 +107,7 @@ void MainWindow::on_openFileButton_clicked()
         }
         if (state != 0)
         {
-            if (isXYmove(dataStr, &Xval, &Yval))
+            if (isXYmove(dataStr, &Xval, &Yval,ConfigParser->G1Tag))
             {
                 Xmass.push_back(Xval);
                 Ymass.push_back(Yval);
@@ -304,7 +308,7 @@ void MainWindow::on_insertTextPlot_clicked()
     QVector<double> tx,ty,tt;
     for(int i = 0; i < rowList.length(); i++)
     {
-        if (isXYmove(rowList[i],&x,&y))
+        if (isXYmove(rowList[i],&x,&y,ConfigParser->G1Tag))
         {
             tx.push_back(x);
             ty.push_back(y);

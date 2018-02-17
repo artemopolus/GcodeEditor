@@ -3,16 +3,16 @@
 # Project created by QtCreator 2017-12-16T00:08:11
 #
 #-------------------------------------------------
-QMAKE_EXTRA_TARGETS += before_build makefilehook
+#QMAKE_EXTRA_TARGETS += before_build makefilehook
 
-makefilehook.target = $(MAKEFILE)
-makefilehook.depends = .beforebuild
+#makefilehook.target = $(MAKEFILE)
+#makefilehook.depends = .beforebuild
 
-PRE_TARGETDEPS += .beforebuild
+#PRE_TARGETDEPS += .beforebuild
 
-before_build.target = .beforebuild
-before_build.depends = FORCE
-before_build.commands = chcp 1251
+#before_build.target = .beforebuild
+#before_build.depends = FORCE
+#before_build.commands = chcp 1251
 
 QT       += core gui
 
@@ -25,10 +25,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     qcustomplot.cpp \
-    gcodeanalyzator.cpp
+    gcodeanalyzator.cpp \
+    json.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
-    gcodeanalyzator.h
+    gcodeanalyzator.h \
+    json.h
 
 FORMS    += mainwindow.ui

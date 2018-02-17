@@ -9,6 +9,7 @@
 #include <QVector>
 #include <QMouseEvent>
 #include "qcustomplot.h"
+#include <QDebug>
 
 namespace Ui {
 class MainWindow;
@@ -35,6 +36,8 @@ public:
     QFile srcFile;
     QVector<oneLayer> listLayer;
     int currentLayer;
+    gCodeParser * ConfigParser;
+
 
 
 private slots:

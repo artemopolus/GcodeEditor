@@ -1,7 +1,7 @@
 #include "gcodeanalyzator.h"
 
 
-bool isLayerChange(QString data)
+bool isLayerChange(QString data, QString LayerChangeTag, QString EndTag, QString CommentTag)
 {
    QStringList dataList = data.split(" ");
    for (int i = 0; i < dataList.length(); i++)
@@ -14,7 +14,7 @@ bool isLayerChange(QString data)
    return false;
 }
 
-bool isZChange(QString data, float *val)
+bool isZChange(QString data, float *val, QString G1Tag)
 {
    QStringList dataList = data.split(" ");
    if (dataList[0] == G1Tag)
@@ -32,7 +32,7 @@ bool isZChange(QString data, float *val)
    return false;
 }
 
-bool isXYmove(QString data, double *X, double *Y)
+bool isXYmove(QString data, double *X, double *Y, QString G1Tag)
 {
     QStringList datamass = data.split(" ");
     if (datamass.length() > 2){
@@ -46,4 +46,52 @@ bool isXYmove(QString data, double *X, double *Y)
         }
     }
     return false;
+}
+gCodeParser::gCodeParser(QString path)
+{
+    this->filename = path;
+}
+gCodeParser::~gCodeParser()
+{
+
+}
+void gCodeParser::readJsonFile()
+{
+    //qDebug() << "path:" << this->filename;
+    QFile file(this->filename);
+    //QFile file("D:/SyncFolder/Workspace/Projects/GcodeEditor/build-GCodeEditor-Desktop_Qt_5_10_1_MinGW_32bit-Debug/debug/config.json");
+    //QFile file("config.json");
+    if (!file.exists())
+    {
+        QString str = "File " + this->filename + " is not exist";
+        qFatal(str.toLatin1().data());
+        file.close();
+        return;
+    }
+    if (!file.open(QIODevice::ReadOnly)) {
+        QString str = "Could not read " + this->filename + "!";
+        qFatal(str.toLatin1().data());
+        file.close();
+        return;
+    } else {
+        QTextStream in(&file);
+        QString str = in.readAll();
+        bool ok;
+        JsonObject json = QtJson::parse(str, ok).toMap();
+        if (!ok) {
+            qFatal("An error occurred during parsing");
+            return;
+        }
+        else
+            qDebug() << "Config data:";
+        this->ChangeLayerTag = json["change layer tag"].toString();
+        this->OnEndTag = json["end of printing"].toString();
+        this->CommentTag = json["comment indicator"].toString();
+        this->G1Tag = json["move indicator"].toString();
+        qDebug() << "change layer tag" << (this->ChangeLayerTag);
+        qDebug() << "end of printing" << (this->OnEndTag);
+        qDebug() << "comment indicator" << (this->CommentTag);
+        qDebug() << "move indicator" << (this->G1Tag);
+        file.close();
+    }
 }

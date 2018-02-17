@@ -1,0 +1,6 @@
+{
+	"change layer tag" : "on_change_layer",
+	"end of printing" : "on_end",
+	"comment indicator" : ";",
+	"move indicator" : "G1"
+}
