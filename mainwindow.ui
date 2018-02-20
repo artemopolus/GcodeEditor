@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>477</width>
-    <height>347</height>
+    <width>572</width>
+    <height>547</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,38 +18,38 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>70</y>
-      <width>231</width>
-      <height>221</height>
+      <y>130</y>
+      <width>300</width>
+      <height>300</height>
      </rect>
     </property>
    </widget>
    <widget class="QTextEdit" name="textToInsert">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>70</y>
-      <width>101</width>
-      <height>221</height>
+      <x>430</x>
+      <y>130</y>
+      <width>131</width>
+      <height>301</height>
      </rect>
     </property>
    </widget>
    <widget class="QListWidget" name="layersList">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>70</y>
-      <width>71</width>
-      <height>221</height>
+      <x>330</x>
+      <y>130</y>
+      <width>91</width>
+      <height>301</height>
      </rect>
     </property>
    </widget>
    <widget class="QLabel" name="statusLabel">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>50</y>
-      <width>431</width>
+      <x>10</x>
+      <y>110</y>
+      <width>411</width>
       <height>21</height>
      </rect>
     </property>
@@ -62,16 +62,59 @@
      <string>TextLabel</string>
     </property>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>81</width>
-      <height>24</height>
+      <x>370</x>
+      <y>10</y>
+      <width>91</width>
+      <height>73</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QVBoxLayout" name="verticalLayoutLabel">
+     <item>
+      <widget class="QLabel" name="insertLabel">
+       <property name="text">
+        <string>Вставки</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="InsertButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Insert text</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>Тот шаблон</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>77</width>
+      <height>73</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayoutFile">
+     <item>
+      <widget class="QLabel" name="fileLabel">
+       <property name="text">
+        <string>Файлы</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QPushButton" name="openFileButton">
        <property name="text">
@@ -79,104 +122,83 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="SaveButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Save</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
-   <widget class="QPushButton" name="InsertButton">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>20</y>
-      <width>80</width>
-      <height>21</height>
+      <x>240</x>
+      <y>10</y>
+      <width>118</width>
+      <height>41</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Insert text</string>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayoutScale">
+     <item>
+      <widget class="QLabel" name="scaleLabel">
+       <property name="text">
+        <string>Масштаб</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="fixScaleBox">
+       <property name="text">
+        <string>Использ. текущий</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
-   <widget class="QPushButton" name="SaveButton">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>20</y>
-      <width>80</width>
-      <height>21</height>
+      <x>110</x>
+      <y>10</y>
+      <width>118</width>
+      <height>90</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Save</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>0</y>
-      <width>80</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>PushButton</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="captureOnBox">
-    <property name="geometry">
-     <rect>
-      <x>280</x>
-      <y>0</y>
-      <width>54</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Capture</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="insertTextPlot">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>0</y>
-      <width>80</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Plot insert text</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="fixScaleBox">
-    <property name="geometry">
-     <rect>
-      <x>280</x>
-      <y>20</y>
-      <width>54</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Fix Scale</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="dontUpdateScreenBox">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>20</y>
-      <width>71</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Don't update</string>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayoutDraw">
+     <item>
+      <widget class="QLabel" name="drawLabel">
+       <property name="text">
+        <string>Рисование</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="insertTextPlot">
+       <property name="text">
+        <string>Plot insert text</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="captureOnBox">
+       <property name="text">
+        <string>Захват мыши</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="dontUpdateScreenBox">
+       <property name="text">
+        <string>Не очищать экран</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -184,8 +206,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>477</width>
-     <height>17</height>
+     <width>572</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>

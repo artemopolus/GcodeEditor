@@ -10,8 +10,13 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->plotData->addGraph();
     this->ui->plotData->addGraph();
     this->path = new QCPCurve(ui->plotData->xAxis,ui->plotData->yAxis);
+    /*
+     * Привязываем событие клика мыши
+     */
     connect(this->ui->plotData, &QCustomPlot::mousePress,this,&MainWindow::mousePressEvent);
-    //ConfigParser("config.json");
+    /*
+    * Загрузка конфигурации для парсинга
+    */
     ConfigParser = new gCodeParser("config.json");
     ConfigParser->readJsonFile();
 
@@ -124,7 +129,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QRect newSize;
     newSize.setX(5);
-    int shiftY  = 90;
+    int shiftY  = 150;
     newSize.setY(shiftY);
     int width = floor(event->size().width()/2);
     int heigth = floor(event->size().height() - shiftY);
