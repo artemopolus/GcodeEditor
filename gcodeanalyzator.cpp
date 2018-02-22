@@ -88,6 +88,8 @@ void gCodeParser::readJsonFile()
         this->OnEndTag = json["end of printing"].toString();
         this->CommentTag = json["comment indicator"].toString();
         this->G1Tag = json["move indicator"].toString();
+        this->InsertStartTag = json["marker on start insert"].toString();
+        this->InsertEndTag = json["marker on end insert"].toString();
         qDebug() << "change layer tag" << (this->ChangeLayerTag);
         qDebug() << "end of printing" << (this->OnEndTag);
         qDebug() << "comment indicator" << (this->CommentTag);

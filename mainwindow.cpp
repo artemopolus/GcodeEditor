@@ -29,11 +29,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
+    /* Регистрируем отправку событий нажатия клавиши */
     QCustomPlot* customPlot = qobject_cast<QCustomPlot*>(sender());
-        double x = customPlot->xAxis->pixelToCoord(event->pos().x());
-        double y = customPlot->yAxis->pixelToCoord(event->pos().y());
+    double x = customPlot->xAxis->pixelToCoord(event->pos().x());
+    double y = customPlot->yAxis->pixelToCoord(event->pos().y());
+    /* Генерируем строку сохранения */
     QString str = "G1 X" + QString::number(x) + " Y" + QString::number(y);
     this->ui->statusLabel->setText(str);
+    /* Добавляем данные в поле, если есть галка */
     if (this->ui->captureOnBox->isChecked())
     {
         this->ui->textToInsert->append(str);
@@ -42,14 +45,36 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 
 void MainWindow::on_openFileButton_clicked()
 {
+    /* Отключаем кнопки, если они активны */
+    if (this->ui->InsertButton->isEnabled())
+        this->ui->InsertButton->setEnabled(false);
+    if(this->ui->SaveButton->isEnabled())
+        this->ui->SaveButton->setEnabled(false);
+    /* Открываем файл и парсим данные о имени и типе файла */
     this->fileName = QFileDialog::getOpenFileName(this,"Open g-code","",tr("*.gco, *.gcode"));
     QStringList fileNameMass = this->fileName.split("/");
     this->ui->statusLabel->setText(fileNameMass[fileNameMass.length()-1]);
     this->srcFile.setFileName(this->fileName);
-    this->srcFile.open(QIODevice::ReadOnly);
+    /* Проверка корректности файла */
+    if(!this->srcFile.open(QIODevice::ReadOnly))
+    {
+        this->ui->statusLabel->setText(QString("can't open file"));
+        return;
+    }
     QTextStream input;
     input.setDevice(&this->srcFile);
     //this->ui->statusLabel->setText(input.readLine());
+    /*
+     * Инициируем переменные для поиска:
+     * Состояние простого автомата
+     * Перменная для хранения номера строки
+     * Перменная для временного хранения высоты слоя
+     * Перменная для хранения высоты слоя
+     * Счетчик слоев
+     * Переменные хранения
+     * Массив траектории печати
+     * Объект для хранения данных о слоях
+     */
     int state = 0;
     int str = -1;
     float Ztmp = -1;
@@ -58,9 +83,16 @@ void MainWindow::on_openFileButton_clicked()
     double Xval, Yval;
     QVector<double> Xmass, Ymass;
     listLayer.clear();
+    /* Старт обработки текста */
     for (int i =0; !input.atEnd(); i++)
     {
         QString dataStr = input.readLine();
+        /*
+         * Список состояний:
+         * Инициирование и обнуление
+         * Поиск смены высоты
+         * Уточнение высоты или, если конец слоя, запись данных
+        */
         switch (state)
         {
         case 0:
@@ -110,6 +142,7 @@ void MainWindow::on_openFileButton_clicked()
             }
             break;
         }
+        /* Запись массива траектори */
         if (state != 0)
         {
             if (isXYmove(dataStr, &Xval, &Yval,ConfigParser->G1Tag))
@@ -128,6 +161,7 @@ void MainWindow::CorrectSize()
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QRect newSize;
+    /* Установка размера окна рисования */
     newSize.setX(5);
     int shiftY  = 150;
     newSize.setY(shiftY);
@@ -138,6 +172,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     this->ui->plotData->setGeometry(newSize);
     //ui->tabWidget->setGeometry(newSize);
 
+    /* Установка размера списка слоев */
     width = floor(event->size().width()/4) - 20;
     newSize.setX(floor(event->size().width()/2) + 5);
     newSize.setY(shiftY);
@@ -145,6 +180,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     newSize.setHeight(heigth - 50);
     this->ui->layersList->setGeometry(newSize);
 
+    /* Установка размера бокса текста для вставки */
     newSize.setX(floor(event->size().width()*3/4) + 10);
     newSize.setY(shiftY);
     newSize.setWidth(width);
@@ -155,17 +191,21 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 void MainWindow::on_layersList_currentRowChanged(int currentRow)
 {
     this->ui->statusLabel->setText(QString::number(currentRow));
+    /* включение неактивных кнопок */
     if (!this->ui->InsertButton->isEnabled())
         this->ui->InsertButton->setEnabled(true);
     if(!this->ui->SaveButton->isEnabled())
         this->ui->SaveButton->setEnabled(true);
     this->currentLayer = currentRow;
+    /* проверка наличия уже вставленного текста */
     if (!this->listLayer[currentRow].text.isNull())
         this->ui->textToInsert->setText(this->listLayer[currentRow].text);
     else
         this->ui->textToInsert->clear();
+    /* надо очищать? */
     if (!this->ui->dontUpdateScreenBox->isChecked())
         this->ui->plotData->clearPlottables();
+    /* загрузка данных слоя */
     QVector<double> X = this->listLayer[currentRow].Xdata;
     QVector<double> Y = this->listLayer[currentRow].Ydata;
     /*
@@ -178,16 +218,17 @@ The newly created plottable can be modified, e.g.:
   newCurve->setName("Fermat's Spiral");
   newCurve->setData(tData, xData, yData);
      * */
-    //this->ui->plotData->addGraph();
-    //this->ui->plotData->graph(0)->setData(X,Y);
+
+    /* Рисуем траекторию движения по слою */
     QCPCurve * newCurve = new QCPCurve(ui->plotData->xAxis,ui->plotData->yAxis);
     QVector<double> t;
     for (int i = 0; i < X.length(); i++) t.push_back(i);
     newCurve->setData(t, X, Y);
-    //this->ui->plotData->rescaleAxes();
-    //ui->Acc1widget->yAxis->setRange(minY, maxY);
+
+    /* Надо ли масштабировать?*/
     if (!this->ui->fixScaleBox->isChecked())
     {
+        /* Масштабирем по центру без искажений */
         double minX = X[0]; double maxX = X[0];
         double minY = Y[0]; double maxY = Y[0];
         for (int i = 0; i < X.length(); i++)
@@ -216,11 +257,13 @@ The newly created plottable can be modified, e.g.:
             this->ui->plotData->yAxis->setRange((meanMaxMinY - halfMax_Min - shift),(meanMaxMinY + halfMax_Min + shift));
         }
     }
+    /* рисуем все! */
     this->ui->plotData->replot();
 }
 
 void MainWindow::on_InsertButton_clicked()
 {
+    /* Вставка текста в информацию о слое для дальнейшего сохранения */
     QString text = this->ui->textToInsert->toPlainText();
     this->listLayer[this->currentLayer].text = text;
     QString str = this->ui->layersList->item(this->currentLayer)->text();
@@ -241,7 +284,6 @@ void MainWindow::on_InsertButton_clicked()
             str += " edit";
         }
     }
-    //QString str = this->ui->layersList->item(this->currentLayer)->text() + " edit";
 
     this->ui->layersList->removeItemWidget(this->ui->layersList->takeItem(this->currentLayer));
     this->ui->layersList->insertItem((this->currentLayer - 1), str);
@@ -249,6 +291,7 @@ void MainWindow::on_InsertButton_clicked()
 
 void MainWindow::on_SaveButton_clicked()
 {
+    /* сохранение данных */
     QStringList filenamemass = this->fileName.split("/");
     QString filepath = "";
     for (int i = 0; i < (filenamemass.length()-1); i++)
@@ -270,6 +313,7 @@ void MainWindow::on_SaveButton_clicked()
     QTextStream output;
     output.setDevice(&resFile);
 
+    /* вставка всех данных */
     for (int i =0; !input.atEnd(); i++)
     {
         QString str = input.readLine();
@@ -279,9 +323,9 @@ void MainWindow::on_SaveButton_clicked()
             {
                 if (!this->listLayer[layerCounter].text.isEmpty())
                 {
-                    output << "; [start_insert] \n";
+                    output << "; "  << this->ConfigParser->InsertStartTag   <<  " \n";
                     output << this->listLayer[layerCounter].text;
-                    output << "\n; [end_insert] \n";
+                    output << "\n;" << this->ConfigParser->InsertEndTag     <<  " \n";
                 }
                 layerCounter++;
             }
@@ -321,9 +365,12 @@ void MainWindow::on_insertTextPlot_clicked()
             t++;
         }
     }
-    QCPCurve * m = new QCPCurve(ui->plotData->xAxis,ui->plotData->yAxis);
-    m->setData(tt,tx,ty);
-    m->setPen(QPen(Qt::red));
+    //if(this->path)
+        //delete this->path;
+    this->path = new QCPCurve(ui->plotData->xAxis,ui->plotData->yAxis);
+
+    this->path->setData(tt,tx,ty);
+    this->path->setPen(QPen(Qt::red));
     //this->path->setData(tt, tx, ty);
     this->ui->plotData->replot();
 }

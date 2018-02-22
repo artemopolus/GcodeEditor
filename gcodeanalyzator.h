@@ -33,6 +33,8 @@ public:
     QString CommentTag;
     QString G1Tag;
     QString OnEndTag;
+    QString InsertStartTag;
+    QString InsertEndTag;
 private:
     QString filename;
 };
