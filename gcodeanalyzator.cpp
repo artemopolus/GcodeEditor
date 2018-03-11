@@ -97,3 +97,33 @@ void gCodeParser::readJsonFile()
         file.close();
     }
 }
+void getTextDetailUp(QString * data, const double X, const double Y, const double dZ, const int minT, const int maxT, const double E)
+{
+    //    M107		; fan off
+    * data = "M107\n";
+    //    M109 R200 	; set extruder temperature and wait
+    * data += "M109 R" + QString::number(maxT) + "\n";
+    //    G91 		; relative
+    * data += "G91\nG1 Z" + QString::number(dZ) +"\n";
+    //    G1 Z5 		; up
+    //    G90 		; absolute
+    //    G28 X Y 	; home to X Y
+    * data += "G90\nG28 X Y\n";
+
+//    G1 X99 Y128	; go to first point
+    * data += "G1 X" + QString::number(X) + " Y" + QString::number(Y) + "\n";
+//    G91 			; relative
+//    G1 Z-5 			; down
+//    G90 			; absolute
+    * data += "G91\nG1 Z" + QString::number(-dZ) +"\nG90\n";
+//    G1 E15 F700		; connecting head to detail
+//    M106			; fan on
+//    M109 R50 		; wait untill colling
+//    M107			; fan off
+    * data += "G1 E" + QString::number(E);
+    * data += " F700\nM106\nM109 R" + QString::number(minT) +"\nM107\n";
+//    G91 			; relative
+//    G1 Z5 			; turn up detail
+//    G90 			; absolute
+    * data += "G91\nG1 Z" + QString::number(dZ) +"\nG90\n";
+}

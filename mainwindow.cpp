@@ -36,6 +36,9 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     /* Генерируем строку сохранения */
     QString str = "G1 X" + QString::number(x) + " Y" + QString::number(y);
     this->ui->statusLabel->setText(str);
+    /* Сохраняем последние */
+    this->curX = x;
+    this->curY = y;
     /* Добавляем данные в поле, если есть галка */
     if (this->ui->captureOnBox->isChecked())
     {

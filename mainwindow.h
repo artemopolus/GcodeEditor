@@ -38,6 +38,9 @@ public:
     int currentLayer;
     gCodeParser * ConfigParser;
 
+    double curX;
+    double curY;
+
 
 
 private slots:

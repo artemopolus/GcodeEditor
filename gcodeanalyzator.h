@@ -20,6 +20,7 @@ using QtJson::JsonArray;
 bool isLayerChange(QString data, QString LayerChangeTag, QString EndTag, QString CommentTag);
 bool isZChange(QString data, float * val, QString G1Tag);
 bool isXYmove(QString data, double * X, double * Y, QString G1Tag);
+void getTextDetailUp(QString * data, const double X, const double Y, const double dZ, const int minT, const int maxT, const double E);
 
 
 
