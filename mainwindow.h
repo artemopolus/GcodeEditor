@@ -38,6 +38,7 @@ public:
     int currentLayer;
     gCodeParser * ConfigParser;
 
+    bool clickWas;
     double curX;
     double curY;
 

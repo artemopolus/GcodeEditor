@@ -23,7 +23,10 @@ bool isXYmove(QString data, double * X, double * Y, QString G1Tag);
 void getTextDetailUp(QString * data, const double X, const double Y, const double dZ, const int minT, const int maxT, const double E);
 void getTextMoveDetail(QString * data, const double X, const double Y);
 void getTextDownUP(QString * data, const double dZ, const int Twait);
+void getTextDownPut(QString * data, const double dZ, const int Theat);
 void getTextDownDetach(QString * data, const double dZ, const int Theat, const float E);
+QString getTextRemove(const double X1, const double Y1, const double X2, const double Y2, const double dZ);
+QString getTextPutTo(const double X1, const double Y1, const double X2, const double Y2, const double dZ);
 
 
 

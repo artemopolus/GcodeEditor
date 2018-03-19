@@ -213,6 +213,32 @@
      <string>PushButton</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="capture4detachBox">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>60</y>
+      <width>70</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Снятие</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="capture2putBox">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>90</y>
+      <width>111</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Переставление</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

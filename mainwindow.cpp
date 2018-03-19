@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     */
     ConfigParser = new gCodeParser("config.json");
     ConfigParser->readJsonFile();
+    this->clickWas = false;
 
 }
 
@@ -37,6 +38,21 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     QString str = "G1 X" + QString::number(x) + " Y" + QString::number(y);
     this->ui->statusLabel->setText(str);
     /* Сохраняем последние */
+    if (!this->clickWas)
+        this->clickWas = true;
+    else
+    {
+        if (this->ui->capture4detachBox->isChecked())
+        {
+            QString res = getTextRemove(this->curX,this->curY,x,y,5);
+            this->ui->textToInsert->append(res);
+        }
+        if (this->ui->capture2putBox->isChecked())
+        {
+            QString res = getTextPutTo(this->curX, this->curY,x,y,10);
+            this->ui->textToInsert->append(res);
+        }
+    }
     this->curX = x;
     this->curY = y;
     /* Добавляем данные в поле, если есть галка */
@@ -44,6 +60,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     {
         this->ui->textToInsert->append(str);
     }
+
 }
 
 void MainWindow::on_openFileButton_clicked()

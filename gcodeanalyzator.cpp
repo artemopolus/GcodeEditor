@@ -155,6 +155,16 @@ void getTextDownUP(QString *data, const double dZ, const int Twait)
     * data += "G90\n";
     * data += ";Detail down and up stop\n";
 }
+void getTextDownPut(QString *data, const double dZ, const int Theat)
+{
+    * data = ";Detail down and put start\n";
+    * data += "G91\n";
+    * data += "G1 Z" + QString::number(-dZ) + "\n";
+    * data += "M109 R" + QString::number(Theat) + "\n";
+    * data += "G1 Z" + QString::number(dZ) + "\n";
+    * data += "G90\n";
+    * data += ";Detail down and put stop\n";
+}
 void getTextDownDetach(QString *data, const double dZ, const int Theat, const float E)
 {
     * data = ";Detail down and detach\n";
@@ -165,4 +175,28 @@ void getTextDownDetach(QString *data, const double dZ, const int Theat, const fl
     * data += "G1 Z" + QString::number(dZ) + "\n";
     * data += "G90\n";
     * data += ";Detail down and detach\n";
+}
+QString getTextRemove(const double X1, const double Y1, const double X2, const double Y2, const double dZ)
+{
+    QString res;
+    QString tmp;
+    getTextDetailUp(&tmp, X1, Y1, dZ, 40, 200, 15);
+    res += tmp;
+    getTextMoveDetail(&tmp, X2, Y2);
+    res +=tmp;
+    getTextDownDetach(&tmp, dZ, 200, -10);
+    res += tmp;
+    return res;
+}
+QString getTextPutTo(const double X1, const double Y1, const double X2, const double Y2, const double dZ)
+{
+    QString res;
+    QString tmp;
+    getTextDetailUp(&tmp, X1, Y1, dZ, 40, 200, 15);
+    res += tmp;
+    getTextMoveDetail(&tmp, X2, Y2);
+    res += tmp;
+    getTextDownPut(&tmp, dZ, 200);
+    res += tmp;
+    return res;
 }
