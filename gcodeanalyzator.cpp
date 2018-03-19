@@ -100,7 +100,8 @@ void gCodeParser::readJsonFile()
 void getTextDetailUp(QString * data, const double X, const double Y, const double dZ, const int minT, const int maxT, const double E)
 {
     //    M107		; fan off
-    * data = "M107\n";
+    * data = ";Move detail up start\n";
+    * data += "M107\n";
     //    M109 R200 	; set extruder temperature and wait
     * data += "M109 R" + QString::number(maxT) + "\n";
     //    G91 		; relative
@@ -126,4 +127,42 @@ void getTextDetailUp(QString * data, const double X, const double Y, const doubl
 //    G1 Z5 			; turn up detail
 //    G90 			; absolute
     * data += "G91\nG1 Z" + QString::number(dZ) +"\nG90\n";
+    * data += ";Move detail up stop\n";
+}
+void getTextMoveDetail(QString *data, const double X, const double Y)
+{
+    * data = "G1";
+    * data += " X" + QString::number(X);
+    * data += " Y" + QString::number(Y);
+    * data += "\n";
+}
+void getTextDownUP(QString *data, const double dZ, const int Twait)
+{
+//    M109 R200;		; heat head
+//    G1 E45 F700		; disconnect detail with plastic
+//    G1 Y100			; move bed to center
+//    G1 Y250
+//    M104 S0			; cool down
+
+//    G91 			; relative
+//    G1 Z-5 		; back to init z
+//    G90 			; absolute
+    * data = ";Detail down and up start\n";
+    * data += "G91\n";
+    * data += "G1 Z" + QString::number(-dZ) + "\n";
+    * data += "G4 P" + QString::number(Twait) + "\n";
+    * data += "G1 Z" + QString::number(dZ) + "\n";
+    * data += "G90\n";
+    * data += ";Detail down and up stop\n";
+}
+void getTextDownDetach(QString *data, const double dZ, const int Theat, const float E)
+{
+    * data = ";Detail down and detach\n";
+    * data += "G91\n";
+    * data += "G1 Z" + QString::number(-dZ) + "\n";
+    * data += "M109 R" + QString::number(Theat) + "\n";
+    * data += "G1 E" + QString::number(E) + " F700\n";
+    * data += "G1 Z" + QString::number(dZ) + "\n";
+    * data += "G90\n";
+    * data += ";Detail down and detach\n";
 }
