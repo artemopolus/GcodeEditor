@@ -32,6 +32,16 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     /* Регистрируем отправку событий нажатия клавиши */
     QCustomPlot* customPlot = qobject_cast<QCustomPlot*>(sender());
+    int ax = event->pos().x();
+    int ay = event->pos().y();
+    /* Проверяем объект */
+    int x1 = this->ui->plotData->x();
+    int x2 = x1 + this->ui->plotData->width();
+    int y1 = this->ui->plotData->y();
+    int y2 = y1 + this->ui->plotData->height();
+    if (!((ax > x1)&&(ax < x2)&&(ay > y1)&&(ay < y2)))
+        return;
+    /* переводим в координаты */
     double x = customPlot->xAxis->pixelToCoord(event->pos().x());
     double y = customPlot->yAxis->pixelToCoord(event->pos().y());
     /* Генерируем строку сохранения */
