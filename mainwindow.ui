@@ -180,7 +180,7 @@
      <item>
       <widget class="QPushButton" name="insertTextPlot">
        <property name="text">
-        <string>Plot insert text</string>
+        <string>Рисовать данные</string>
        </property>
       </widget>
      </item>
@@ -199,19 +199,6 @@
       </widget>
      </item>
     </layout>
-   </widget>
-   <widget class="QPushButton" name="pushButton_2">
-    <property name="geometry">
-     <rect>
-      <x>470</x>
-      <y>90</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>PushButton</string>
-    </property>
    </widget>
    <widget class="QCheckBox" name="capture4detachBox">
     <property name="geometry">
@@ -237,6 +224,16 @@
     </property>
     <property name="text">
      <string>Переставление</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="captureComboBox">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>90</y>
+      <width>91</width>
+      <height>22</height>
+     </rect>
     </property>
    </widget>
   </widget>

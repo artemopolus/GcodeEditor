@@ -21,6 +21,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ConfigParser->readJsonFile();
     this->clickWas = false;
 
+    this->ui->captureComboBox->addItem(QString("Нет захвата"));
+    this->ui->captureComboBox->addItem(QString("Пол. мыши"));
+    this->ui->captureComboBox->addItem(QString("Переставление"));
+    this->ui->captureComboBox->addItem(QString("Снятие"));
+    this->ui->captureComboBox->setCurrentIndex(0);
 }
 
 MainWindow::~MainWindow()
@@ -30,18 +35,22 @@ MainWindow::~MainWindow()
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
+    if (!((this->ui->captureOnBox->isChecked())||(this->ui->capture4detachBox->isChecked())))
+        return;
     /* Регистрируем отправку событий нажатия клавиши */
     QCustomPlot* customPlot = qobject_cast<QCustomPlot*>(sender());
-    int ax = event->pos().x();
-    int ay = event->pos().y();
-    /* Проверяем объект */
-    int x1 = this->ui->plotData->x();
-    int x2 = x1 + this->ui->plotData->width();
-    int y1 = this->ui->plotData->y();
-    int y2 = y1 + this->ui->plotData->height();
-    if (!((ax > x1)&&(ax < x2)&&(ay > y1)&&(ay < y2)))
-        return;
+//    int ax = event->pos().x();
+//    int ay = event->pos().y();
+//    /* Проверяем объект */
+//    int x1 = this->ui->plotData->x();
+//    int x2 = x1 + this->ui->plotData->width();
+//    int y1 = this->ui->plotData->y();
+//    int y2 = y1 + this->ui->plotData->height();
+    //if (!((ax > x1)&&(ax < x2)&&(ay > y1)&&(ay < y2)))
+    //    return;
     /* переводим в координаты */
+    if (!customPlot)
+        return;
     double x = customPlot->xAxis->pixelToCoord(event->pos().x());
     double y = customPlot->yAxis->pixelToCoord(event->pos().y());
     /* Генерируем строку сохранения */
