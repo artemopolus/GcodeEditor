@@ -166,7 +166,7 @@
       <x>110</x>
       <y>10</y>
       <width>118</width>
-      <height>90</height>
+      <height>93</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayoutDraw">
@@ -185,11 +185,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="captureOnBox">
-       <property name="text">
-        <string>Захват мыши</string>
-       </property>
-      </widget>
+      <widget class="QComboBox" name="captureComboBox"/>
      </item>
      <item>
       <widget class="QCheckBox" name="dontUpdateScreenBox">
@@ -199,42 +195,6 @@
       </widget>
      </item>
     </layout>
-   </widget>
-   <widget class="QCheckBox" name="capture4detachBox">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>60</y>
-      <width>70</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Снятие</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="capture2putBox">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>90</y>
-      <width>111</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Переставление</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="captureComboBox">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>90</y>
-      <width>91</width>
-      <height>22</height>
-     </rect>
-    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

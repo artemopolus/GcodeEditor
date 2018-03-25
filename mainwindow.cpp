@@ -35,19 +35,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
-    if (!((this->ui->captureOnBox->isChecked())||(this->ui->capture4detachBox->isChecked())))
+    if (this->ui->captureComboBox->currentIndex() == 0)
         return;
     /* Регистрируем отправку событий нажатия клавиши */
     QCustomPlot* customPlot = qobject_cast<QCustomPlot*>(sender());
-//    int ax = event->pos().x();
-//    int ay = event->pos().y();
-//    /* Проверяем объект */
-//    int x1 = this->ui->plotData->x();
-//    int x2 = x1 + this->ui->plotData->width();
-//    int y1 = this->ui->plotData->y();
-//    int y2 = y1 + this->ui->plotData->height();
-    //if (!((ax > x1)&&(ax < x2)&&(ay > y1)&&(ay < y2)))
-    //    return;
     /* переводим в координаты */
     if (!customPlot)
         return;
@@ -61,12 +52,12 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
         this->clickWas = true;
     else
     {
-        if (this->ui->capture4detachBox->isChecked())
+        if (this->ui->captureComboBox->currentIndex() == 3)
         {
             QString res = getTextRemove(this->curX,this->curY,x,y,5);
             this->ui->textToInsert->append(res);
         }
-        if (this->ui->capture2putBox->isChecked())
+        if (this->ui->captureComboBox->currentIndex() == 2)
         {
             QString res = getTextPutTo(this->curX, this->curY,x,y,10);
             this->ui->textToInsert->append(res);
@@ -75,7 +66,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     this->curX = x;
     this->curY = y;
     /* Добавляем данные в поле, если есть галка */
-    if (this->ui->captureOnBox->isChecked())
+    if (this->ui->captureComboBox->currentIndex() == 1)
     {
         this->ui->textToInsert->append(str);
     }
