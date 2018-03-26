@@ -15,6 +15,7 @@ class CaptureParams : public QDialog
 public:
     explicit CaptureParams(QWidget *parent = 0);
     ~CaptureParams();
+    void putOffsetZ(double dZ);
 
 private:
     Ui::CaptureParams *ui;

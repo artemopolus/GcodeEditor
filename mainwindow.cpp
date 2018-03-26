@@ -411,11 +411,12 @@ void MainWindow::on_capParamsButton_clicked()
     paramsDial = new CaptureParams(this);
     connect( paramsDial, SIGNAL(sendMoveZ(double)), this, SLOT(setMW_MoveZ(double)));
     paramsDial->setModal(true);
+    paramsDial->putOffsetZ(this->deltaMoveZ);
     paramsDial->exec();
 }
 void MainWindow::setMW_MoveZ(double val)
 {
-    qDebug()<< "text";
+    //qDebug()<< "text";
     this->deltaMoveZ = val;
     this->ui->statusLabel->setText(QString::number(this->deltaMoveZ));
 }

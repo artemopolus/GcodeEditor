@@ -16,10 +16,11 @@ CaptureParams::~CaptureParams()
 
 void CaptureParams::on_OKButton_clicked()
 {
-    emit sendMoveZ(678);
+    emit sendMoveZ(this->ui->offsetZspinBox->value());
     this->close();
 }
-//void CaptureParams::sendMoveZ(double)
-//{
 
-//}
+void CaptureParams::putOffsetZ(double dZ)
+{
+    this->ui->offsetZspinBox->setValue(dZ);
+}
