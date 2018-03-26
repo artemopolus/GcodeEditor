@@ -65,7 +65,7 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>460</x>
       <y>10</y>
       <width>91</width>
       <height>73</height>
@@ -103,7 +103,7 @@
      <rect>
       <x>20</x>
       <y>10</y>
-      <width>77</width>
+      <width>82</width>
       <height>73</height>
      </rect>
     </property>
@@ -137,7 +137,7 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>340</x>
       <y>10</y>
       <width>118</width>
       <height>41</height>
@@ -196,6 +196,19 @@
      </item>
     </layout>
    </widget>
+   <widget class="QPushButton" name="capParamsButton">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>10</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Настройки</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -203,7 +216,7 @@
      <x>0</x>
      <y>0</y>
      <width>572</width>
-     <height>21</height>
+     <height>17</height>
     </rect>
    </property>
   </widget>

@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ConfigParser = new gCodeParser("config.json");
     ConfigParser->readJsonFile();
     this->clickWas = false;
+    this->deltaMoveZ = 5;
 
     this->ui->captureComboBox->addItem(QString("Нет захвата"));
     this->ui->captureComboBox->addItem(QString("Пол. мыши"));
@@ -54,12 +55,12 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     {
         if (this->ui->captureComboBox->currentIndex() == 3)
         {
-            QString res = getTextRemove(this->curX,this->curY,x,y,5);
+            QString res = getTextRemove(this->curX,this->curY,x,y,this->deltaMoveZ);
             this->ui->textToInsert->append(res);
         }
         if (this->ui->captureComboBox->currentIndex() == 2)
         {
-            QString res = getTextPutTo(this->curX, this->curY,x,y,10);
+            QString res = getTextPutTo(this->curX, this->curY,x,y,this->deltaMoveZ);
             this->ui->textToInsert->append(res);
         }
     }
@@ -403,4 +404,18 @@ void MainWindow::on_insertTextPlot_clicked()
     this->path->setPen(QPen(Qt::red));
     //this->path->setData(tt, tx, ty);
     this->ui->plotData->replot();
+}
+
+void MainWindow::on_capParamsButton_clicked()
+{
+    paramsDial = new CaptureParams(this);
+    connect( paramsDial, SIGNAL(sendMoveZ(double)), this, SLOT(setMW_MoveZ(double)));
+    paramsDial->setModal(true);
+    paramsDial->exec();
+}
+void MainWindow::setMW_MoveZ(double val)
+{
+    qDebug()<< "text";
+    this->deltaMoveZ = val;
+    this->ui->statusLabel->setText(QString::number(this->deltaMoveZ));
 }

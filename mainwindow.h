@@ -10,6 +10,7 @@
 #include <QMouseEvent>
 #include "qcustomplot.h"
 #include <QDebug>
+#include "captureparams.h"
 
 namespace Ui {
 class MainWindow;
@@ -41,7 +42,11 @@ public:
     bool clickWas;
     double curX;
     double curY;
+    double deltaMoveZ;
 
+    CaptureParams * paramsDial = 0;
+public slots:
+    void setMW_MoveZ(double val);
 
 
 private slots:
@@ -62,6 +67,8 @@ private slots:
     void on_textToInsert_textChanged();
 
     void on_insertTextPlot_clicked();
+
+    void on_capParamsButton_clicked();
 
 private:
     Ui::MainWindow *ui;
