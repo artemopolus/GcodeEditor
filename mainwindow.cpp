@@ -33,6 +33,13 @@ MainWindow::MainWindow(QWidget *parent) :
     this->plateX = 200;
     this->plateY = 300;
 
+    /* рисуем выбранную точку */
+
+    this->ui->plotData->addGraph();
+    this->ui->plotData->graph(2)->setPen(QColor(100,100,100,255));
+    this->ui->plotData->graph(2)->setLineStyle(QCPGraph::lsNone);
+    this->ui->plotData->graph(2)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCrossCircle,10));
+
 }
 
 MainWindow::~MainWindow()
@@ -75,6 +82,10 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 
     double x = customPlot->xAxis->pixelToCoord(event->pos().x());
     double y = customPlot->yAxis->pixelToCoord(event->pos().y());
+    QVector<double> Xpt, Ypt;
+    Xpt.push_back(x); Ypt.push_back(y);
+    this->ui->plotData->graph(2)->setData(Xpt,Ypt);
+    this->ui->plotData->replot();
     /* Генерируем строку сохранения */
     QString str = "G1 X" + QString::number(x) + " Y" + QString::number(y);
     this->ui->statusLabel->setText(str);
