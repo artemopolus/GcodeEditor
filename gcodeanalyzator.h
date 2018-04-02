@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
+#include <QVector>
 
 #include "json.h"
 using QtJson::JsonObject;
@@ -27,6 +28,7 @@ void getTextDownPut(QString * data, const double dZ, const int Theat);
 void getTextDownDetach(QString * data, const double dZ, const int Theat, const float E);
 QString getTextRemove(const double X1, const double Y1, const double X2, const double Y2, const double dZ);
 QString getTextPutTo(const double X1, const double Y1, const double X2, const double Y2, const double dZ);
+QString getTextPathPutTo(QVector<double> X, QVector<double> Y, const double dZ);
 
 
 

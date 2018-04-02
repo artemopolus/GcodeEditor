@@ -27,11 +27,40 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->captureComboBox->addItem(QString("Переставление"));
     this->ui->captureComboBox->addItem(QString("Снятие"));
     this->ui->captureComboBox->setCurrentIndex(0);
+
+    this->ui->postText2saveEdit->setText("drop");
+
+    this->plateX = 200;
+    this->plateY = 300;
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if(event->type() == QEvent::KeyPress){
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        if ((keyEvent->key() == Qt::Key_Return)||(keyEvent->key() == Qt::Key_Enter)){
+            qDebug("Enter Key Pressed...");
+            if (msX.size()>1)
+            {
+                QString res = getTextPathPutTo(msX,msY,this->deltaMoveZ);
+                this->ui->textToInsert->append(res);
+                res = "";
+                for(int i = 0; i < msX.size(); i++)
+                {
+                    res += "[" + QString::number(msX[i]) + "," + QString::number(msY[i]) + "];";
+                }
+                this->ui->statusLabel->setText(res);
+                msX.clear();
+                msY.clear();
+            }
+            return;
+        }
+    }
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
@@ -43,11 +72,13 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     /* переводим в координаты */
     if (!customPlot)
         return;
+
     double x = customPlot->xAxis->pixelToCoord(event->pos().x());
     double y = customPlot->yAxis->pixelToCoord(event->pos().y());
     /* Генерируем строку сохранения */
     QString str = "G1 X" + QString::number(x) + " Y" + QString::number(y);
     this->ui->statusLabel->setText(str);
+
     /* Сохраняем последние */
     if (!this->clickWas)
         this->clickWas = true;
@@ -58,12 +89,19 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
             QString res = getTextRemove(this->curX,this->curY,x,y,this->deltaMoveZ);
             this->ui->textToInsert->append(res);
         }
-        if (this->ui->captureComboBox->currentIndex() == 2)
-        {
-            QString res = getTextPutTo(this->curX, this->curY,x,y,this->deltaMoveZ);
-            this->ui->textToInsert->append(res);
-        }
+//        if (this->ui->captureComboBox->currentIndex() == 2)
+//        {
+//            QString res = getTextPutTo(this->curX, this->curY,x,y,this->deltaMoveZ);
+//            this->ui->textToInsert->append(res);
+//        }
+        this->clickWas = false;
     }
+    if (this->ui->captureComboBox->currentIndex() == 2)
+    {
+        msX.push_back(x);
+        msY.push_back(y);
+    }
+
     this->curX = x;
     this->curY = y;
     /* Добавляем данные в поле, если есть галка */
@@ -419,4 +457,43 @@ void MainWindow::setMW_MoveZ(double val)
     //qDebug()<< "text";
     this->deltaMoveZ = val;
     this->ui->statusLabel->setText(QString::number(this->deltaMoveZ));
+}
+
+void MainWindow::on_captureComboBox_currentIndexChanged(int index)
+{
+    this->clickWas = false;
+}
+
+void MainWindow::on_saveInsert2fileButton_clicked()
+{
+    /* сохранение данных */
+    QStringList filenamemass = this->fileName.split("/");
+    QString filepath = "";
+    for (int i = 0; i < (filenamemass.length()-1); i++)
+    {
+        filepath += filenamemass[i] + "/";
+    }
+    QString nameext = filenamemass[filenamemass.length()-1];
+    QStringList nameextmass = nameext.split(".");
+    filepath += nameextmass[0] + "_" +this->ui->postText2saveEdit->text() + "." + nameextmass[1];
+    this->ui->statusLabel->setText(filepath);
+//    this->srcFile.open(QIODevice::ReadOnly);
+//    QTextStream input;
+//    input.setDevice(&this->srcFile);
+
+    QFile resFile;
+    resFile.setFileName(filepath);
+    resFile.open(QIODevice::WriteOnly);
+    QTextStream output;
+    output.setDevice(&resFile);
+    output << this->ui->textToInsert->toPlainText();
+    //this->srcFile.close();
+    resFile.close();
+}
+
+void MainWindow::on_setScale2TableButton_clicked()
+{
+    this->ui->plotData->xAxis->setRange(0, this->plateX);
+    this->ui->plotData->yAxis->setRange(0, this->plateY);
+    this->ui->plotData->replot();
 }

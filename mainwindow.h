@@ -42,6 +42,9 @@ public:
     bool clickWas;
     double curX;
     double curY;
+    QVector<double> msX;
+    QVector<double> msY;
+
     double deltaMoveZ;
 
     CaptureParams * paramsDial = 0;
@@ -64,15 +67,25 @@ private slots:
 
     void mousePressEvent(QMouseEvent* event);
 
+    void keyPressEvent(QKeyEvent *event);
+
     void on_textToInsert_textChanged();
 
     void on_insertTextPlot_clicked();
 
     void on_capParamsButton_clicked();
 
+    void on_captureComboBox_currentIndexChanged(int index);
+
+    void on_saveInsert2fileButton_clicked();
+
+    void on_setScale2TableButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QCPCurve * path;
+    double plateX;
+    double plateY;
 };
 
 #endif // MAINWINDOW_H

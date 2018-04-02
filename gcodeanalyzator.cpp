@@ -200,3 +200,20 @@ QString getTextPutTo(const double X1, const double Y1, const double X2, const do
     res += tmp;
     return res;
 }
+QString getTextPathPutTo(QVector<double> X, QVector<double> Y, const double dZ)
+{
+    if (X.size() < 2)
+        return NULL;
+    QString res;
+    QString tmp;
+    getTextDetailUp(&tmp,X[0],Y[0], dZ,40,200,15);
+    res = tmp;
+    for (int i = 1; i < (X.size()); i++)
+    {
+        getTextMoveDetail(&tmp,X[i], Y[i]);
+        res += tmp;
+    }
+    getTextDownPut(&tmp, dZ, 200);
+    res += tmp;
+    return res;
+}
