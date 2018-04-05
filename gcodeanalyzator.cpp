@@ -13,6 +13,16 @@ bool isLayerChange(QString data, QString LayerChangeTag, QString EndTag, QString
    }
    return false;
 }
+bool isEndOfPrint(QString data, QString EndTag)
+{
+    QStringList dataList = data.split(" ");
+    for (int i = 0; i < dataList.length(); i++)
+    {
+        if ((dataList[i] == EndTag)||(dataList[i]) == (CommentTag + EndTag))
+            return true;
+    }
+    return false;
+}
 
 bool isZChange(QString data, float *val, QString G1Tag)
 {
@@ -44,6 +54,87 @@ bool isXYmove(QString data, double *X, double *Y, QString G1Tag)
             *Y = yval.toDouble();
             return true;
         }
+    }
+    return false;
+}
+bool isXYmove2(QString data, double *X, double *Y, double *E, double *F, QString G1Tag)
+{
+    QStringList datamass = data.split(" ");
+    if (datamass[0] == G1Tag)
+    {
+        for (int i = 1; i < datamass.length(); i++)
+        {
+            if (datamass[i][0] == 'X')
+                *X = datamass[i].remove(0,1).toDouble();
+            if (datamass[i][0] == 'Y')
+                *Y = datamass[i].remove(0,1).toDouble();
+            if (datamass[i][0] == 'E')
+                *E = datamass[i].remove(0,1).toDouble();
+            if (datamass[i][0] == 'F')
+                *F = datamass[i].remove(0,1).toDouble();
+            return true;
+        }
+    }
+    return false;
+}
+bool isFanChange(QString data, double *S)
+{
+    QStringList datamass = data.split(" ");
+    if (datamass[0] == "M106")
+    {
+        if (datamass[1][0] == 'S')
+            *S = datamass[1].remove(0,1).toDouble();
+        return true;
+    }
+    if (datamass[0] == "M107")
+    {
+        * S = 0;
+        return true;
+    }
+    return false;
+}
+bool isTempExtrChange(QString data, double *T)
+{
+    QStringList datamass = data.split(" ");
+    if (datamass[0] == "M104")
+    {
+        if (datamass[1][0] == 'S')
+            *T = datamass[1].remove(0,1).toDouble();
+        return true;
+    }
+    if (datamass[0] == "M109")
+    {
+        if (datamass[1][0] == 'S')
+            *T = datamass[1].remove(0,1).toDouble();
+        return true;
+    }
+    return false;
+}
+bool isTempTablChange(QString data, double *T)
+{
+    QStringList datamass = data.split(" ");
+    if (datamass[0] == "M140")
+    {
+        if (datamass[1][0] == 'S')
+            *T = datamass[1].remove(0,1).toDouble();
+        return true;
+    }
+    if (datamass[0] == "M190")
+    {
+        if (datamass[1][0] == 'S')
+            *T = datamass[1].remove(0,1).toDouble();
+        return true;
+    }
+    return false;
+}
+bool isAccelChange(QString data, double *S)
+{
+    QStringList datamass = data.split(" ");
+    if (datamass[0] == "M204")
+    {
+        if (datamass[1][0] == 'S')
+            *S = datamass[1].remove(0,1).toDouble();
+        return true;
     }
     return false;
 }
@@ -217,3 +308,4 @@ QString getTextPathPutTo(QVector<double> X, QVector<double> Y, const double dZ)
     res += tmp;
     return res;
 }
+/* сначала температура, выставить значение Е, в нуль вернуть х у и z обязательно, вентилятор, высота, в последнюю точку */

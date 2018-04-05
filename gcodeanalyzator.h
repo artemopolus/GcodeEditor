@@ -19,8 +19,17 @@ using QtJson::JsonArray;
 //QString const EndTag = "[on_end]";
 
 bool isLayerChange(QString data, QString LayerChangeTag, QString EndTag, QString CommentTag);
+bool isEndOfPrint(QString data,QString EndTag);
+bool isTempExtrChange(QString data, double * T);
+bool isTempTablChange(QString data, double * T);
+
 bool isZChange(QString data, float * val, QString G1Tag);
 bool isXYmove(QString data, double * X, double * Y, QString G1Tag);
+bool isXYmove2(QString data, double *X, double * Y, double * E, double * F, QString G1Tag);
+
+bool isFanChange(QString data, double * S);
+bool isAccelChange(QString data, double * S);
+
 void getTextDetailUp(QString * data, const double X, const double Y, const double dZ, const int minT, const int maxT, const double E);
 void getTextMoveDetail(QString * data, const double X, const double Y);
 void getTextDownUP(QString * data, const double dZ, const int Twait);

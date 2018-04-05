@@ -23,6 +23,12 @@ typedef struct
     QString text;
     QVector<double> Xdata;
     QVector<double> Ydata;
+    QVector<double> Edata;
+    QVector<double> Fdata;
+    QVector<double> FVdata;
+    QVector<double> ACdata;
+    double Textr;
+    double Ttabl;
 }oneLayer;
 
 
@@ -81,11 +87,15 @@ private slots:
 
     void on_setScale2TableButton_clicked();
 
+    void on_cutButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QCPCurve * path;
     double plateX;
     double plateY;
+    int EndStartPart;
+    int StartEndPart;
 };
 
 #endif // MAINWINDOW_H

@@ -104,7 +104,7 @@
       <x>20</x>
       <y>10</y>
       <width>82</width>
-      <height>73</height>
+      <height>102</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayoutFile">
@@ -118,7 +118,7 @@
      <item>
       <widget class="QPushButton" name="openFileButton">
        <property name="text">
-        <string>Open file</string>
+        <string>Открыть</string>
        </property>
       </widget>
      </item>
@@ -128,7 +128,14 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>Save</string>
+        <string>Сохранить</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cutButton">
+       <property name="text">
+        <string>Вырезать</string>
        </property>
       </widget>
      </item>

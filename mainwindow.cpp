@@ -160,8 +160,15 @@ void MainWindow::on_openFileButton_clicked()
     float Ztmp = -1;
     float Z;
     int layerCount = 0;
-    double Xval, Yval;
-    QVector<double> Xmass, Ymass;
+    double Xval = qQNaN();
+    double Yval = qQNaN();
+    double Eval = qQNaN();
+    double Fval = qQNaN();
+    double FVval = qQNaN();
+    double ACval = qQNaN();
+    double TextrVal = qQNaN();
+    double TtablVal = qQNaN();
+    QVector<double> Xmass, Ymass, Emass, Fmass, FVmass,ACmass;
     listLayer.clear();
     /* Старт обработки текста */
     for (int i =0; !input.atEnd(); i++)
@@ -183,6 +190,11 @@ void MainWindow::on_openFileButton_clicked()
                 Ztmp = -1;
                 Xmass.clear();
                 Ymass.clear();
+                Emass.clear();
+                Fmass.clear();
+                FVmass.clear();
+                ACmass.clear();
+                this->EndStartPart = i;
             }
             break;
         case 1:
@@ -209,6 +221,12 @@ void MainWindow::on_openFileButton_clicked()
                     obj.Z = Z;
                     obj.Xdata = Xmass;
                     obj.Ydata = Ymass;
+                    obj.Edata = Emass;
+                    obj.Fdata = Fmass;
+                    obj.FVdata = FVmass;
+                    obj.ACdata = ACmass;
+                    obj.Textr = TextrVal;
+                    obj.Ttabl = TtablVal;
                     this->listLayer.push_back(obj);
                     this->ui->layersList->addItem(QString::number(layerCount) + " " + QString::number(obj.str) + " " + QString::number(obj.Z));
                     layerCount++;
@@ -218,6 +236,14 @@ void MainWindow::on_openFileButton_clicked()
                     Ztmp = -1;
                     Xmass.clear();
                     Ymass.clear();
+                    Emass.clear();
+                    Fmass.clear();
+                    FVmass.clear();
+                    ACmass.clear();
+                    if(isEndOfPrint(dataStr,ConfigParser->OnEndTag))
+                    {
+                        this->StartEndPart = i;
+                    }
                 }
             }
             break;
@@ -225,11 +251,22 @@ void MainWindow::on_openFileButton_clicked()
         /* Запись массива траектори */
         if (state != 0)
         {
-            if (isXYmove(dataStr, &Xval, &Yval,ConfigParser->G1Tag))
-            {
-                Xmass.push_back(Xval);
-                Ymass.push_back(Yval);
-            }
+//            if (isXYmove(dataStr, &Xval, &Yval,ConfigParser->G1Tag))
+//            {
+//                Xmass.push_back(Xval);
+//                Ymass.push_back(Yval);
+//            }
+            isXYmove2(datastr,&Xval,&Yval,&Eval,&Fval,ConfigParser->G1Tag);
+            isFanChange(dataStr, &FVval);
+            isAccelChange(dataStr, &ACval);
+            isTempExtrChange(dataStr,&TextrVal);
+            isTempTablChange(dataStr,&TtablVal);
+            Xmass.push_back(Xval);
+            Ymass.push_back(Yval);
+            Emass.push_back(Eval);
+            Fmass.push_back(Fval);
+            FVmass.push_back(FVval);
+            ACmass.push_back(ACval);
         }
     }
     this->srcFile.close();
@@ -507,4 +544,96 @@ void MainWindow::on_setScale2TableButton_clicked()
     this->ui->plotData->xAxis->setRange(0, this->plateX);
     this->ui->plotData->yAxis->setRange(0, this->plateY);
     this->ui->plotData->replot();
+}
+
+void MainWindow::on_cutButton_clicked()
+{
+    int ptr2strend = this->ui->layersList->currentRow();
+    int ptr2end = this->listLayer[ptr2strend].str;
+    /* сохранение данных */
+    QStringList filenamemass = this->fileName.split("/");
+    QString filepath = "";
+    for (int i = 0; i < (filenamemass.length()-1); i++)
+    {
+        filepath += filenamemass[i] + "/";
+    }
+    QString nameext = filenamemass[filenamemass.length()-1];
+    QStringList nameextmass = nameext.split(".");
+    filepath += nameextmass[0] + "_cut0." + nameextmass[1];
+    this->ui->statusLabel->setText(filepath);
+    this->srcFile.open(QIODevice::ReadOnly);
+    QTextStream input;
+    input.setDevice(&this->srcFile);
+    int layerCounter = 0;
+
+    QFile resFile;
+    resFile.setFileName(filepath);
+    resFile.open(QIODevice::WriteOnly);
+    QTextStream output;
+    output.setDevice(&resFile);
+
+    /* вставка всех данных */
+    for (int i =0; (!input.atEnd()); i++)
+    {
+        QString str = input.readLine();
+        if ((i < ptr2end)||(i > this->StartEndPart))
+        {
+        if (layerCounter < listLayer.length())
+        {
+            if (this->listLayer[layerCounter].str == i)
+            {
+                if (!this->listLayer[layerCounter].text.isEmpty())
+                {
+                    output << "; "  << this->ConfigParser->InsertStartTag   <<  " \n";
+                    output << this->listLayer[layerCounter].text;
+                    output << "\n;" << this->ConfigParser->InsertEndTag     <<  " \n";
+                }
+                layerCounter++;
+            }
+        }
+        output << str + "\n";
+        }
+    }
+
+    this->srcFile.close();
+    resFile.close();
+
+    filepath += nameextmass[0] + "_cut1." + nameextmass[1];
+    resFile.setFileName(filepath);
+    resFile.open(QIODevice::WriteOnly);
+    output.setDevice(&resFile);
+    this->srcFile.open(QIODevice::ReadOnly);
+    input.setDevice(&this->srcFile);
+    //layerCounter = 0;
+
+    /* вставка всех данных */
+    for (int i =0; (!input.atEnd()); i++)
+    {
+        QString str = input.readLine();
+        if (i == this->EndStartPart)
+        {
+                // insert here
+        }
+        if ((i < this->EndStartPart)||(i > ptr2end))
+        {
+        if (layerCounter < listLayer.length())
+        {
+            if (this->listLayer[layerCounter].str == i)
+            {
+                if (!this->listLayer[layerCounter].text.isEmpty())
+                {
+                    output << "; "  << this->ConfigParser->InsertStartTag   <<  " \n";
+                    output << this->listLayer[layerCounter].text;
+                    output << "\n;" << this->ConfigParser->InsertEndTag     <<  " \n";
+                }
+                layerCounter++;
+            }
+        }
+        output << str + "\n";
+        }
+    }
+
+    this->srcFile.close();
+    resFile.close();
+
 }
