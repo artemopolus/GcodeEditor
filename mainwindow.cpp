@@ -174,6 +174,10 @@ void MainWindow::on_openFileButton_clicked()
     for (int i =0; !input.atEnd(); i++)
     {
         QString dataStr = input.readLine();
+        isFanChange(dataStr, &FVval);
+        isAccelChange(dataStr, &ACval);
+        isTempExtrChange(dataStr,&TextrVal);
+        isTempTablChange(dataStr,&TtablVal);
         /*
          * Список состояний:
          * Инициирование и обнуление
@@ -559,8 +563,9 @@ void MainWindow::on_cutButton_clicked()
     }
     QString nameext = filenamemass[filenamemass.length()-1];
     QStringList nameextmass = nameext.split(".");
+    QString filepath2 = filepath + nameextmass[0] + "_cut1." + nameextmass[1];
     filepath += nameextmass[0] + "_cut0." + nameextmass[1];
-    QString filepath2 = filepath + nameextmass[0] + "_cut0." + nameextmass[1];
+
     this->ui->statusLabel->setText(filepath + " " + filepath2);
     this->srcFile.open(QIODevice::ReadOnly);
     QTextStream input;

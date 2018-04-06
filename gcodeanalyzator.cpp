@@ -72,8 +72,9 @@ bool isXYmove2(QString data, double *X, double *Y, double *E, double *F, QString
                 *E = datamass[i].remove(0,1).toDouble();
             if (datamass[i][0] == 'F')
                 *F = datamass[i].remove(0,1).toDouble();
-            return true;
+
         }
+        return true;
     }
     return false;
 }
@@ -320,7 +321,7 @@ QString getTextStartNotFrstLayer(const int Textr, const int Ttabl, const double 
     res += "G28 Y\t;go to null X" + n;
     res += "G28 X\t;go to null Y" + n;
     res += "G28 Z\t;go to null Z" + n;
-    res += "M106 S" + QString::number(FanV) + t + ";set fan speed" + n;
+    res += "M106 S" + QString::number(FanV) + t + "set fan speed" + n;
     res += "G1 Z" + QString::number(Z) + t + "go to start Z" + n;
     res += "G1 X" + QString::number(X) + " Y" + QString::number(Y) + t + "go to start point" + n;
     return res;
