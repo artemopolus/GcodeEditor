@@ -240,7 +240,7 @@ void MainWindow::on_openFileButton_clicked()
                     Fmass.clear();
                     FVmass.clear();
                     ACmass.clear();
-                    if(isEndOfPrint(dataStr,ConfigParser->OnEndTag))
+                    if(isEndOfPrint(dataStr,ConfigParser->OnEndTag,ConfigParser->CommentTag))
                     {
                         this->StartEndPart = i;
                     }
@@ -256,7 +256,7 @@ void MainWindow::on_openFileButton_clicked()
 //                Xmass.push_back(Xval);
 //                Ymass.push_back(Yval);
 //            }
-            isXYmove2(datastr,&Xval,&Yval,&Eval,&Fval,ConfigParser->G1Tag);
+            isXYmove2(dataStr,&Xval,&Yval,&Eval,&Fval,ConfigParser->G1Tag);
             isFanChange(dataStr, &FVval);
             isAccelChange(dataStr, &ACval);
             isTempExtrChange(dataStr,&TextrVal);
@@ -560,80 +560,79 @@ void MainWindow::on_cutButton_clicked()
     QString nameext = filenamemass[filenamemass.length()-1];
     QStringList nameextmass = nameext.split(".");
     filepath += nameextmass[0] + "_cut0." + nameextmass[1];
-    this->ui->statusLabel->setText(filepath);
+    QString filepath2 = filepath + nameextmass[0] + "_cut0." + nameextmass[1];
+    this->ui->statusLabel->setText(filepath + " " + filepath2);
     this->srcFile.open(QIODevice::ReadOnly);
     QTextStream input;
     input.setDevice(&this->srcFile);
     int layerCounter = 0;
 
+    /* первый файл */
     QFile resFile;
     resFile.setFileName(filepath);
     resFile.open(QIODevice::WriteOnly);
     QTextStream output;
     output.setDevice(&resFile);
+    /* второй файл */
+    QFile resFile2;
+    resFile2.setFileName(filepath2);
+    resFile2.open(QIODevice::WriteOnly);
+    QTextStream output2;
+    output2.setDevice(&resFile2);
 
     /* вставка всех данных */
+
+    /* начало второго файла генерируется на основе последнего слоя первого */
+    int Textr = (int) this->listLayer[ptr2strend].Textr;
+    int Ttabl = (int) this->listLayer[ptr2strend].Ttabl;
+    int last = this->listLayer[ptr2strend - 1].Xdata.size();
+    double X = this->listLayer[ptr2strend - 1].Xdata[last - 1];
+    //check size plz
+    double Y = this->listLayer[ptr2strend - 1].Ydata[last - 1];
+    double Z = this->listLayer[ptr2strend].Z;
+    double E = this->listLayer[ptr2strend - 1].Edata[this->listLayer[ptr2strend - 1].Edata.size() - 1];
+    double FanV = this->listLayer[ptr2strend - 1].FVdata[this->listLayer[ptr2strend - 1].FVdata.size() - 1];
+    output2 << getTextStartNotFrstLayer(Textr,Ttabl,X,Y,Z,E, FanV) << "\n";
+
     for (int i =0; (!input.atEnd()); i++)
     {
         QString str = input.readLine();
+        if (layerCounter < listLayer.length())
+        {
+            if (this->listLayer[layerCounter].str == i)
+            {
+                if (!this->listLayer[layerCounter].text.isEmpty())
+                {
+                    if (i < ptr2end)
+                    {
+                        output << "; "  << this->ConfigParser->InsertStartTag   <<  " \n";
+                        output << this->listLayer[layerCounter].text;
+                        output << "\n;" << this->ConfigParser->InsertEndTag     <<  " \n";
+                    }
+                    if (i >= ptr2end)
+                    {
+                        output2 << "; "  << this->ConfigParser->InsertStartTag   <<  " \n";
+                        output2 << this->listLayer[layerCounter].text;
+                        output2 << "\n;" << this->ConfigParser->InsertEndTag     <<  " \n";
+                    }
+                }
+                layerCounter++;
+            }
+        }
         if ((i < ptr2end)||(i > this->StartEndPart))
         {
-        if (layerCounter < listLayer.length())
-        {
-            if (this->listLayer[layerCounter].str == i)
-            {
-                if (!this->listLayer[layerCounter].text.isEmpty())
-                {
-                    output << "; "  << this->ConfigParser->InsertStartTag   <<  " \n";
-                    output << this->listLayer[layerCounter].text;
-                    output << "\n;" << this->ConfigParser->InsertEndTag     <<  " \n";
-                }
-                layerCounter++;
-            }
+            output << str + "\n";
         }
-        output << str + "\n";
+        if (i >= ptr2end)
+        {
+            output2 << str + "\n";
         }
     }
 
     this->srcFile.close();
     resFile.close();
+    resFile2.close();
 
-    filepath += nameextmass[0] + "_cut1." + nameextmass[1];
-    resFile.setFileName(filepath);
-    resFile.open(QIODevice::WriteOnly);
-    output.setDevice(&resFile);
-    this->srcFile.open(QIODevice::ReadOnly);
-    input.setDevice(&this->srcFile);
-    //layerCounter = 0;
 
-    /* вставка всех данных */
-    for (int i =0; (!input.atEnd()); i++)
-    {
-        QString str = input.readLine();
-        if (i == this->EndStartPart)
-        {
-                // insert here
-        }
-        if ((i < this->EndStartPart)||(i > ptr2end))
-        {
-        if (layerCounter < listLayer.length())
-        {
-            if (this->listLayer[layerCounter].str == i)
-            {
-                if (!this->listLayer[layerCounter].text.isEmpty())
-                {
-                    output << "; "  << this->ConfigParser->InsertStartTag   <<  " \n";
-                    output << this->listLayer[layerCounter].text;
-                    output << "\n;" << this->ConfigParser->InsertEndTag     <<  " \n";
-                }
-                layerCounter++;
-            }
-        }
-        output << str + "\n";
-        }
-    }
-
-    this->srcFile.close();
-    resFile.close();
 
 }

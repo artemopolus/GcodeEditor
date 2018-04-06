@@ -19,7 +19,7 @@ using QtJson::JsonArray;
 //QString const EndTag = "[on_end]";
 
 bool isLayerChange(QString data, QString LayerChangeTag, QString EndTag, QString CommentTag);
-bool isEndOfPrint(QString data,QString EndTag);
+bool isEndOfPrint(QString data, QString EndTag, QString CommentTag);
 bool isTempExtrChange(QString data, double * T);
 bool isTempTablChange(QString data, double * T);
 
@@ -38,6 +38,8 @@ void getTextDownDetach(QString * data, const double dZ, const int Theat, const f
 QString getTextRemove(const double X1, const double Y1, const double X2, const double Y2, const double dZ);
 QString getTextPutTo(const double X1, const double Y1, const double X2, const double Y2, const double dZ);
 QString getTextPathPutTo(QVector<double> X, QVector<double> Y, const double dZ);
+
+QString getTextStartNotFrstLayer(const int Textr, const int Ttabl, const double X, const double Y, const double Z, const double E, const int FanV);
 
 
 

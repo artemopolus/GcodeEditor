@@ -13,7 +13,7 @@ bool isLayerChange(QString data, QString LayerChangeTag, QString EndTag, QString
    }
    return false;
 }
-bool isEndOfPrint(QString data, QString EndTag)
+bool isEndOfPrint(QString data, QString EndTag,QString CommentTag)
 {
     QStringList dataList = data.split(" ");
     for (int i = 0; i < dataList.length(); i++)
@@ -308,4 +308,20 @@ QString getTextPathPutTo(QVector<double> X, QVector<double> Y, const double dZ)
     res += tmp;
     return res;
 }
-/* сначала температура, выставить значение Е, в нуль вернуть х у и z обязательно, вентилятор, высота, в последнюю точку */
+
+/* сначала температура, выставить значение Е, в нуль, вернуть х у и z обязательно, вентилятор, высота, в последнюю точку */
+QString getTextStartNotFrstLayer(const int Textr, const int Ttabl, const double X, const double Y, const double Z, const double E, const int FanV)
+{
+    QString n = "\n";
+    QString t = "\t;";
+    QString res = "M109 R" + QString::number(Textr) + "\t ;set extruder temperature" + n;
+    res += "M190 R" + QString::number(Ttabl) + "\t ;set table temperature" + n;
+    res += "G92 E" + QString::number(E) + "\t;set start E" + n;
+    res += "G28 Y\t;go to null X" + n;
+    res += "G28 X\t;go to null Y" + n;
+    res += "G28 Z\t;go to null Z" + n;
+    res += "M106 S" + QString::number(FanV) + t + ";set fan speed" + n;
+    res += "G1 Z" + QString::number(Z) + t + "go to start Z" + n;
+    res += "G1 X" + QString::number(X) + " Y" + QString::number(Y) + t + "go to start point" + n;
+    return res;
+}
