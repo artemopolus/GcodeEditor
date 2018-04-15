@@ -84,8 +84,13 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     double y = customPlot->yAxis->pixelToCoord(event->pos().y());
     QVector<double> Xpt, Ypt;
     Xpt.push_back(x); Ypt.push_back(y);
-    this->ui->plotData->graph(2)->setData(Xpt,Ypt);
-    this->ui->plotData->replot();
+    int count = this->ui->plotData->graphCount();
+    if (count)
+    {
+        this->ui->plotData->graph(2)->setData(Xpt,Ypt);
+        this->ui->plotData->replot();
+    }
+
     /* Генерируем строку сохранения */
     QString str = "G1 X" + QString::number(x) + " Y" + QString::number(y);
     this->ui->statusLabel->setText(str);
@@ -97,7 +102,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     {
         if (this->ui->captureComboBox->currentIndex() == 3)
         {
-            QString res = getTextRemove(this->curX,this->curY,x,y,this->deltaMoveZ);
+            QString res = getTextRemoveClear(this->curX,this->curY,x,y,this->deltaMoveZ);
             this->ui->textToInsert->append(res);
         }
 //        if (this->ui->captureComboBox->currentIndex() == 2)

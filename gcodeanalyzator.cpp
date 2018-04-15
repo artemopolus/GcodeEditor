@@ -149,45 +149,67 @@ gCodeParser::~gCodeParser()
 }
 void gCodeParser::readJsonFile()
 {
-    //qDebug() << "path:" << this->filename;
-    QFile file(this->filename);
-    //QFile file("D:/SyncFolder/Workspace/Projects/GcodeEditor/build-GCodeEditor-Desktop_Qt_5_10_1_MinGW_32bit-Debug/debug/config.json");
-    //QFile file("config.json");
-    if (!file.exists())
+//    //qDebug() << "path:" << this->filename;
+//    QFile file(this->filename);
+//    //QFile file("D:/SyncFolder/Workspace/Projects/GcodeEditor/build-GCodeEditor-Desktop_Qt_5_10_1_MinGW_32bit-Debug/debug/config.json");
+//    //QFile file("config.json");
+//    if (!file.exists())
+//    {
+//        QString str = "File " + this->filename + " is not exist";
+//        qFatal(str.toLatin1().data());
+//        file.close();
+//        return;
+//    }
+//    if (!file.open(QIODevice::ReadOnly)) {
+//        QString str = "Could not read " + this->filename + "!";
+//        qFatal(str.toLatin1().data());
+//        file.close();
+//        return;
+//    } else {
+//        QTextStream in(&file);
+//        QString str = in.readAll();
+//        bool ok;
+//        JsonObject json = QtJson::parse(str, ok).toMap();
+//        if (!ok) {
+//            qFatal("An error occurred during parsing");
+//            return;
+//        }
+//        else
+//            qDebug() << "Config data:";
+//        this->ChangeLayerTag = json["change layer tag"].toString();
+//        this->OnEndTag = json["end of printing"].toString();
+//        this->CommentTag = json["comment indicator"].toString();
+//        this->G1Tag = json["move indicator"].toString();
+//        this->InsertStartTag = json["marker on start insert"].toString();
+//        this->InsertEndTag = json["marker on end insert"].toString();
+//        qDebug() << "change layer tag" << (this->ChangeLayerTag);
+//        qDebug() << "end of printing" << (this->OnEndTag);
+//        qDebug() << "comment indicator" << (this->CommentTag);
+//        qDebug() << "move indicator" << (this->G1Tag);
+//        file.close();
+//    }
+
+    QFile src;
+    src.setFileName(this->filename);
+    if (!src.open(QIODevice::ReadOnly))
     {
-        QString str = "File " + this->filename + " is not exist";
-        qFatal(str.toLatin1().data());
-        file.close();
         return;
     }
-    if (!file.open(QIODevice::ReadOnly)) {
-        QString str = "Could not read " + this->filename + "!";
-        qFatal(str.toLatin1().data());
-        file.close();
-        return;
-    } else {
-        QTextStream in(&file);
-        QString str = in.readAll();
-        bool ok;
-        JsonObject json = QtJson::parse(str, ok).toMap();
-        if (!ok) {
-            qFatal("An error occurred during parsing");
-            return;
-        }
-        else
-            qDebug() << "Config data:";
-        this->ChangeLayerTag = json["change layer tag"].toString();
-        this->OnEndTag = json["end of printing"].toString();
-        this->CommentTag = json["comment indicator"].toString();
-        this->G1Tag = json["move indicator"].toString();
-        this->InsertStartTag = json["marker on start insert"].toString();
-        this->InsertEndTag = json["marker on end insert"].toString();
-        qDebug() << "change layer tag" << (this->ChangeLayerTag);
-        qDebug() << "end of printing" << (this->OnEndTag);
-        qDebug() << "comment indicator" << (this->CommentTag);
-        qDebug() << "move indicator" << (this->G1Tag);
-        file.close();
-    }
+    QByteArray saveData = src.readAll();
+    QJsonDocument  loadDoc(QJsonDocument::fromJson(saveData));
+    QJsonObject json = loadDoc.object();
+    this->ChangeLayerTag = json["change layer tag"].toString();
+    this->OnEndTag = json["end of printing"].toString();
+    this->CommentTag = json["comment indicator"].toString();
+    this->G1Tag = json["move indicator"].toString();
+    this->InsertStartTag = json["marker on start insert"].toString();
+    this->InsertEndTag = json["marker on end insert"].toString();
+    qDebug() << "change layer tag" << (this->ChangeLayerTag);
+    qDebug() << "end of printing" << (this->OnEndTag);
+    qDebug() << "comment indicator" << (this->CommentTag);
+    qDebug() << "move indicator" << (this->G1Tag);
+    src.close();
+
 }
 void getTextDetailUp(QString * data, const double X, const double Y, const double dZ, const int minT, const int maxT, const double E)
 {
@@ -268,6 +290,13 @@ void getTextDownDetach(QString *data, const double dZ, const int Theat, const fl
     * data += "G90\n";
     * data += ";Detail down and detach\n";
 }
+void getTextClear(QString *data, const int Theat, const float E)
+{
+    * data = ";Clear\n";
+    * data += "M109 R" + QString::number(Theat) + "\n";
+    * data += "G1 E" + QString::number(E) + " F700\n";
+    * data += ";Clear\n";
+}
 QString getTextRemove(const double X1, const double Y1, const double X2, const double Y2, const double dZ)
 {
     QString res;
@@ -278,6 +307,19 @@ QString getTextRemove(const double X1, const double Y1, const double X2, const d
     res +=tmp;
     getTextDownDetach(&tmp, dZ, 200, -10);
     res += tmp;
+    return res;
+}
+QString getTextRemoveClear(const double X1, const double Y1, const double X2, const double Y2, const double dZ)
+{
+    QString res;
+    QString tmp;
+    getTextDetailUp(&tmp, X1, Y1, dZ, 40, 200, 15);
+    res += tmp;
+    getTextMoveDetail(&tmp, X2, Y2);
+    res +=tmp;
+    getTextClear(&tmp, 200, -10);
+    res += tmp;
+    res += "M104 S0\n";
     return res;
 }
 QString getTextPutTo(const double X1, const double Y1, const double X2, const double Y2, const double dZ)
