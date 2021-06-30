@@ -563,6 +563,7 @@ void MainWindow::on_setScale2TableButton_clicked()
 void MainWindow::on_cutButton_clicked()
 {
     int ptr2strend = this->ui->layersList->currentRow();
+    if (ptr2strend < 0) return;
 
     int ptr2end = this->listLayer[ptr2strend].str;
     /* сохранение данных */
