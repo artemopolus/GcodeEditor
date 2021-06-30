@@ -40,6 +40,11 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->plotData->graph(2)->setLineStyle(QCPGraph::lsNone);
     this->ui->plotData->graph(2)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCrossCircle,10));
 
+    QSplitter *splitter = this->ui->splitter_plot;
+    QList<int> sizes;
+    sizes.append(splitter->widget(0)->minimumSize().width());
+    sizes.append(splitter->widget(1)->minimumSize().width());
+    splitter->setSizes(sizes);
 }
 
 MainWindow::~MainWindow()
@@ -284,35 +289,35 @@ void MainWindow::CorrectSize()
 {
 
 }
-void MainWindow::resizeEvent(QResizeEvent *event)
-{
-    QRect newSize;
-    /* Установка размера окна рисования */
-    newSize.setX(5);
-    int shiftY  = 150;
-    newSize.setY(shiftY);
-    int width = floor(event->size().width()/2);
-    int heigth = floor(event->size().height() - shiftY);
-    newSize.setWidth(width - 10);
-    newSize.setHeight(width - 10);
-    this->ui->plotData->setGeometry(newSize);
-    //ui->tabWidget->setGeometry(newSize);
+//void MainWindow::resizeEvent(QResizeEvent *event)
+//{
+//    QRect newSize;
+//    /* Установка размера окна рисования */
+//    newSize.setX(5);
+//    int shiftY  = 150;
+//    newSize.setY(shiftY);
+//    int width = floor(event->size().width()/2);
+//    int heigth = floor(event->size().height() - shiftY);
+//    newSize.setWidth(width - 10);
+//    newSize.setHeight(width - 10);
+//    this->ui->plotData->setGeometry(newSize);
+//    //ui->tabWidget->setGeometry(newSize);
 
-    /* Установка размера списка слоев */
-    width = floor(event->size().width()/4) - 20;
-    newSize.setX(floor(event->size().width()/2) + 5);
-    newSize.setY(shiftY);
-    newSize.setWidth(width);
-    newSize.setHeight(heigth - 50);
-    this->ui->layersList->setGeometry(newSize);
+//    /* Установка размера списка слоев */
+//    width = floor(event->size().width()/4) - 20;
+//    newSize.setX(floor(event->size().width()/2) + 5);
+//    newSize.setY(shiftY);
+//    newSize.setWidth(width);
+//    newSize.setHeight(heigth - 50);
+//    this->ui->layersList->setGeometry(newSize);
 
-    /* Установка размера бокса текста для вставки */
-    newSize.setX(floor(event->size().width()*3/4) + 10);
-    newSize.setY(shiftY);
-    newSize.setWidth(width);
-    newSize.setHeight(heigth - 50);
-    this->ui->textToInsert->setGeometry(newSize);
-}
+//    /* Установка размера бокса текста для вставки */
+//    newSize.setX(floor(event->size().width()*3/4) + 10);
+//    newSize.setY(shiftY);
+//    newSize.setWidth(width);
+//    newSize.setHeight(heigth - 50);
+//    this->ui->textToInsert->setGeometry(newSize);
+//}
 
 void MainWindow::on_layersList_currentRowChanged(int currentRow)
 {
@@ -558,6 +563,8 @@ void MainWindow::on_setScale2TableButton_clicked()
 void MainWindow::on_cutButton_clicked()
 {
     int ptr2strend = this->ui->layersList->currentRow();
+    if (ptr2strend < 0) return;
+
     int ptr2end = this->listLayer[ptr2strend].str;
     /* сохранение данных */
     QStringList filenamemass = this->fileName.split("/");

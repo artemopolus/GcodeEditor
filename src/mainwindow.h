@@ -61,7 +61,7 @@ public slots:
 private slots:
     void on_openFileButton_clicked();
     void CorrectSize();
-    void resizeEvent(QResizeEvent *event);
+//    void resizeEvent(QResizeEvent *event);
 
     void on_layersList_currentRowChanged(int currentRow);
 
