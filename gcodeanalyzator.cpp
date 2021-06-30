@@ -193,6 +193,8 @@ void gCodeParser::readJsonFile()
     src.setFileName(this->filename);
     if (!src.open(QIODevice::ReadOnly))
     {
+        QString msg = src.errorString();
+        qWarning() << msg << QDir::currentPath() << QDir::separator() << this->filename;
         return;
     }
     QByteArray saveData = src.readAll();

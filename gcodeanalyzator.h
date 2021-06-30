@@ -5,6 +5,7 @@
 #include <QStringList>
 
 #include <QFile>
+#include <QDir>
 #include <QTextStream>
 #include <QDebug>
 #include <QVector>
