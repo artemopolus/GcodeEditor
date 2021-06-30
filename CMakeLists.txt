@@ -11,16 +11,19 @@ set(CMAKE_AUTOUIC ON)
 find_package(Qt6 COMPONENTS Widgets REQUIRED)
 find_package(Qt6 COMPONENTS PrintSupport REQUIRED)
 
-include_directories(".")
+include_directories(
+    "src"
+    "qcustomplot"
+)
 
 add_executable(gcodeeditor
-    main.cpp
-    mainwindow.cpp
-    qcustomplot.cpp
-    gcodeanalyzator.cpp
-    captureparams.cpp
-    mainwindow.ui
-    captureparams.ui
+    src/main.cpp
+    src/mainwindow.cpp
+    src/gcodeanalyzator.cpp
+    src/captureparams.cpp
+    src/mainwindow.ui
+    src/captureparams.ui
+    qcustomplot/qcustomplot.cpp
 )
 
 # https://www.qcustomplot.com/index.php/download
